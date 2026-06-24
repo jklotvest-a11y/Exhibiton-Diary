@@ -219,44 +219,50 @@
       <article class="bg-surface-container-lowest hand-drawn-border p-3 shadow-sm sticker-rotate-${(i % 3) + 1} cursor-pointer"
                onclick="Router.navigate('/artwork/${a.id}')">
         <div class="relative aspect-square rounded-lg overflow-hidden mb-2">
-          <img class="w-full h-full object-cover" src="${a.cover}" alt="${a.title}" loading="lazy">
+          <img class="w-full h-full object-cover" src="${escapeAttr(a.cover)}" alt="${escapeAttr(a.title)}" loading="lazy">
         </div>
-        <h4 class="font-title-md text-charcoal-text text-base">${a.title}</h4>
-        <p class="font-caption text-on-surface-variant">${a.author || ''}</p>
+        <h4 class="font-title-md text-charcoal-text text-base">${escapeHtml(a.title)}</h4>
+        <p class="font-caption text-on-surface-variant">${escapeHtml(a.author || '')}</p>
       </article>
     `).join('');
 
-    render(`
-      ${appBar('展览详情', '/')}
+    function viewMode() {
+      render(`
+        ${appBar('展览详情', '/')}
 
-      <main class="mt-20 px-container-margin max-w-md mx-auto fade-in">
-        <!-- 大封面（手绘边框） -->
-        <article class="bg-surface-container-lowest hand-drawn-border p-3 shadow-[4px_4px_0px_0px_#1A1A1A] mb-section-gap">
-          <div class="relative aspect-[4/3] rounded-xl overflow-hidden">
-            <img class="w-full h-full object-cover" src="${escapeAttr(ex.cover)}" alt="${escapeAttr(ex.title)}">
-            <span class="absolute top-3 left-3 bg-warm-yellow border-2 border-charcoal-text rounded-full px-3 py-1 text-label-sm text-charcoal-text">
-              ⭐ 精选展览
-            </span>
+        <main class="mt-20 px-container-margin max-w-md mx-auto fade-in">
+          <!-- 大封面（手绘边框） -->
+          <article class="bg-surface-container-lowest hand-drawn-border p-3 shadow-[4px_4px_0px_0px_#1A1A1A] mb-section-gap">
+            <div class="relative aspect-[4/3] rounded-xl overflow-hidden">
+              <img class="w-full h-full object-cover" src="${escapeAttr(ex.cover)}" alt="${escapeAttr(ex.title)}">
+              <span class="absolute top-3 left-3 bg-warm-yellow border-2 border-charcoal-text rounded-full px-3 py-1 text-label-sm text-charcoal-text">
+                ⭐ 精选展览
+              </span>
+            </div>
+          </article>
+
+          <!-- 标题 -->
+          <h1 class="font-headline-lg text-headline-lg text-charcoal-text mb-3">${escapeHtml(ex.title)}</h1>
+
+          <!-- 元信息 -->
+          <div class="font-body-md text-on-surface-variant space-y-1 mb-6">
+            <div class="flex items-center gap-2"><span class="material-symbols-outlined text-base">calendar_today</span>${escapeHtml(ex.date || '')}</div>
+            <div class="flex items-center gap-2"><span class="material-symbols-outlined text-base">location_on</span>${escapeHtml(ex.location || '未填写地点')}</div>
+            <div class="flex items-center gap-2">${escapeHtml(ex.weather || '☀️')}${ex.summary ? '· ' + escapeHtml(ex.summary.slice(0, 40)) + (ex.summary.length > 40 ? '...' : '') : ''}</div>
           </div>
-        </article>
 
-        <!-- 标题 -->
-        <h1 class="font-headline-lg text-headline-lg text-charcoal-text mb-3">${escapeHtml(ex.title)}</h1>
-
-        <!-- 元信息 -->
-        <div class="font-body-md text-on-surface-variant space-y-1 mb-6">
-          <div class="flex items-center gap-2"><span class="material-symbols-outlined text-base">calendar_today</span>${escapeHtml(ex.date || '')}</div>
-          <div class="flex items-center gap-2"><span class="material-symbols-outlined text-base">location_on</span>${escapeHtml(ex.location || '未填写地点')}</div>
-          <div class="flex items-center gap-2">${escapeHtml(ex.weather || '☀️')}${ex.summary ? '· ' + escapeHtml(ex.summary.slice(0, 40)) + (ex.summary.length > 40 ? '...' : '') : ''}</div>
-        </div>
-
-        <!-- 当天小结 -->
-        ${ex.summary ? `
+          <!-- 当天小结（可编辑） -->
           <div class="bg-primary-container/30 border-2 border-charcoal-text rounded-[20px] p-5 mb-section-gap relative">
             <span class="absolute -top-3 left-5 bg-cream-base px-3 text-label-sm text-primary">✦ 当天小结</span>
-            <p class="font-body-md text-on-surface-variant leading-relaxed whitespace-pre-wrap">${escapeHtml(ex.summary)}</p>
+            ${ex.summary
+              ? `<p class="font-body-md text-on-surface-variant leading-relaxed whitespace-pre-wrap">${escapeHtml(ex.summary)}</p>`
+              : `<p class="font-caption text-on-surface-variant italic">还没写，点 ✎ 补一句吧</p>`
+            }
+            <button class="absolute top-2 right-3 w-8 h-8 rounded-full bg-warm-yellow border-2 border-charcoal-text flex items-center justify-center active:scale-90 transition-transform"
+                    onclick="editSummary('${id}')" title="编辑小结">
+              <span class="material-symbols-outlined text-base text-charcoal-text">edit</span>
+            </button>
           </div>
-        ` : ''}
 
         ${paintings.length > 0 ? `
           <div class="flex items-center justify-between mb-4 mt-8">
@@ -296,7 +302,50 @@
 
       ${fab('/camera/' + id)}
       ${tabBar('news')}
-    `);
+      `);
+    }
+
+    function editMode() {
+      render(`
+        ${appBar('展览详情', '/')}
+        <main class="mt-20 px-container-margin max-w-md mx-auto fade-in">
+          <article class="bg-surface-container-lowest hand-drawn-border p-3 shadow-[4px_4px_0px_0px_#1A1A1A] mb-section-gap">
+            <div class="relative aspect-[4/3] rounded-xl overflow-hidden">
+              <img class="w-full h-full object-cover" src="${escapeAttr(ex.cover)}" alt="${escapeAttr(ex.title)}">
+            </div>
+          </article>
+          <h1 class="font-headline-lg text-headline-lg text-charcoal-text mb-6">${escapeHtml(ex.title)}</h1>
+
+          <div class="bg-surface-container-lowest border-2 border-charcoal-text rounded-[20px] p-5 mb-section-gap relative">
+            <span class="absolute -top-3 left-5 bg-cream-base px-3 text-label-sm text-primary">✦ 编 辑 小 结</span>
+            <textarea id="summary-input" rows="6" placeholder="今天看到了什么？心情如何？"
+                      class="w-full p-3 bg-cream-base border-2 border-charcoal-text rounded-2xl font-body-md text-charcoal-text outline-none focus:border-warm-yellow resize-none">${escapeHtml(ex.summary || '')}</textarea>
+            <div class="flex gap-2 mt-3">
+              <button class="flex-1 p-3 bg-surface-container-lowest border-2 border-charcoal-text rounded-full font-label-sm text-charcoal-text shadow-[3px_3px_0px_0px_#1A1A1A] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[1px_1px_0px_0px_#1A1A1A] transition-all"
+                      onclick="cancelEditSummary()">取 消</button>
+              <button class="flex-1 p-3 bg-warm-yellow border-2 border-charcoal-text rounded-full font-label-sm text-charcoal-text shadow-[3px_3px_0px_0px_#1A1A1A] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[1px_1px_0px_0px_#1A1A1A] transition-all"
+                      onclick="saveEditSummary('${id}')">保 存</button>
+            </div>
+          </div>
+        </main>
+        ${tabBar('news')}
+      `);
+    }
+
+    window.editSummary = editMode;
+    window.cancelEditSummary = viewMode;
+    window.saveEditSummary = (aid) => {
+      const ta = document.getElementById('summary-input');
+      if (!ta) return;
+      const cur = Storage.getExhibition(aid);
+      if (!cur) return;
+      cur.summary = ta.value.trim();
+      Storage.saveExhibition(cur);
+      toast('小结已保存 ✦');
+      viewMode();
+    };
+
+    viewMode();
   });
 
   // ========== 路由：创建数字展 ==========
