@@ -94,17 +94,17 @@
       <article class="bg-surface-container-lowest hand-drawn-border p-4 shadow-sm hover:shadow-md transition-shadow sticker-rotate-${(i % 3) + 1} group cursor-pointer"
                onclick="Router.navigate('/detail/${ex.id}')">
         <div class="relative aspect-video rounded-xl overflow-hidden mb-4 border border-outline-variant">
-          <img class="w-full h-full object-cover" src="${ex.cover}" alt="${ex.title}" loading="lazy">
+          <img class="w-full h-full object-cover" src="${escapeAttr(ex.cover)}" alt="${escapeAttr(ex.title)}" loading="lazy">
           <div class="absolute top-2 right-2 bg-white/90 backdrop-blur rounded-full p-1.5 flex items-center justify-center">
             <span class="material-symbols-outlined text-warm-yellow text-sm" style="font-variation-settings: 'FILL' 1;">${getWeatherIcon(ex.weather)}</span>
           </div>
         </div>
         <div class="flex justify-between items-end">
           <div class="space-y-1">
-            <h4 class="font-title-md text-charcoal-text">${ex.title}</h4>
+            <h4 class="font-title-md text-charcoal-text">${escapeHtml(ex.title)}</h4>
             <p class="font-caption text-on-surface-variant flex items-center gap-1">
               <span class="material-symbols-outlined text-xs">calendar_today</span>
-              ${ex.date}
+              ${escapeHtml(ex.date || '')}
             </p>
           </div>
           <div class="bg-warm-yellow px-3 py-1 rounded-full text-label-sm text-charcoal-text border border-charcoal-text active:scale-95 transition-transform cursor-pointer">
@@ -233,7 +233,7 @@
         <!-- 大封面（手绘边框） -->
         <article class="bg-surface-container-lowest hand-drawn-border p-3 shadow-[4px_4px_0px_0px_#1A1A1A] mb-section-gap">
           <div class="relative aspect-[4/3] rounded-xl overflow-hidden">
-            <img class="w-full h-full object-cover" src="${ex.cover}" alt="${ex.title}">
+            <img class="w-full h-full object-cover" src="${escapeAttr(ex.cover)}" alt="${escapeAttr(ex.title)}">
             <span class="absolute top-3 left-3 bg-warm-yellow border-2 border-charcoal-text rounded-full px-3 py-1 text-label-sm text-charcoal-text">
               ⭐ 精选展览
             </span>
@@ -241,20 +241,20 @@
         </article>
 
         <!-- 标题 -->
-        <h1 class="font-headline-lg text-headline-lg text-charcoal-text mb-3">${ex.title}</h1>
+        <h1 class="font-headline-lg text-headline-lg text-charcoal-text mb-3">${escapeHtml(ex.title)}</h1>
 
         <!-- 元信息 -->
         <div class="font-body-md text-on-surface-variant space-y-1 mb-6">
-          <div class="flex items-center gap-2"><span class="material-symbols-outlined text-base">calendar_today</span>${ex.date}</div>
-          <div class="flex items-center gap-2"><span class="material-symbols-outlined text-base">location_on</span>${ex.location || '未填写地点'}</div>
-          <div class="flex items-center gap-2">${ex.weather || '☀️'}${ex.summary ? '· ' + ex.summary.slice(0, 40) + (ex.summary.length > 40 ? '...' : '') : ''}</div>
+          <div class="flex items-center gap-2"><span class="material-symbols-outlined text-base">calendar_today</span>${escapeHtml(ex.date || '')}</div>
+          <div class="flex items-center gap-2"><span class="material-symbols-outlined text-base">location_on</span>${escapeHtml(ex.location || '未填写地点')}</div>
+          <div class="flex items-center gap-2">${escapeHtml(ex.weather || '☀️')}${ex.summary ? '· ' + escapeHtml(ex.summary.slice(0, 40)) + (ex.summary.length > 40 ? '...' : '') : ''}</div>
         </div>
 
         <!-- 当天小结 -->
         ${ex.summary ? `
           <div class="bg-primary-container/30 border-2 border-charcoal-text rounded-[20px] p-5 mb-section-gap relative">
             <span class="absolute -top-3 left-5 bg-cream-base px-3 text-label-sm text-primary">✦ 当天小结</span>
-            <p class="font-body-md text-on-surface-variant leading-relaxed">${ex.summary}</p>
+            <p class="font-body-md text-on-surface-variant leading-relaxed whitespace-pre-wrap">${escapeHtml(ex.summary)}</p>
           </div>
         ` : ''}
 
