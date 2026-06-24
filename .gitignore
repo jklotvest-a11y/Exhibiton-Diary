@@ -1,0 +1,10 @@
+# macOS
+.DS_Store
+
+# 空目录
+pages/
+
+# 编辑器
+.idea/
+.vscode/
+*.swp

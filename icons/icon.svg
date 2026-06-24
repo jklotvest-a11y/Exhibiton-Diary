@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- 阴影 -->
+  <ellipse cx="100" cy="180" rx="35" ry="5" fill="#1A1A1A" opacity="0.08"/>
+
+  <!-- 身体（更圆润的胖鸡） -->
+  <ellipse cx="100" cy="115" rx="55" ry="55" fill="#FFD56B" stroke="#1A1A1A" stroke-width="3"/>
+
+  <!-- 头顶羽毛（两个尖） -->
+  <path d="M 85 70 Q 90 55 95 65 Q 100 50 105 65 Q 110 55 115 70"
+        fill="none" stroke="#1A1A1A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- 腮红（粉） -->
+  <circle cx="72" cy="105" r="7" fill="#FFB5A7" opacity="0.9"/>
+  <circle cx="128" cy="105" r="7" fill="#FFB5A7" opacity="0.9"/>
+
+  <!-- 眼睛（实心圆） -->
+  <circle cx="85" cy="95" r="5" fill="#1A1A1A"/>
+  <circle cx="115" cy="95" r="5" fill="#1A1A1A"/>
+  <circle cx="86" cy="93" r="1.5" fill="#FFFFFF"/>
+  <circle cx="116" cy="93" r="1.5" fill="#FFFFFF"/>
+
+  <!-- 嘴（橙色三角，张开） -->
+  <path d="M 90 115 L 110 115 L 100 125 Z" fill="#FF9933" stroke="#1A1A1A" stroke-width="2.5" stroke-linejoin="round"/>
+
+  <!-- 左翅（举起，挥手） -->
+  <ellipse cx="55" cy="110" rx="10" ry="18" fill="#FFD56B" stroke="#1A1A1A" stroke-width="2.5"
+           transform="rotate(-30 55 110)"/>
+
+  <!-- 右脚（站立） -->
+  <ellipse cx="85" cy="172" rx="10" ry="4" fill="#FF9933" stroke="#1A1A1A" stroke-width="2"/>
+  <ellipse cx="115" cy="172" rx="10" ry="4" fill="#FF9933" stroke="#1A1A1A" stroke-width="2"/>
+</svg>
