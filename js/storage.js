@@ -46,7 +46,7 @@ const Storage = (() => {
     const list = listExhibitions().filter(e => e.id !== id);
     set('exhibitions', list);
     // 联动删除其作品
-    const arts = listArtworks().filter(a => a.exhibitionId !== id);
+    const arts = listArtworks().filter(a => a.exId !== id);
     set('artworks', arts);
   }
 
@@ -59,7 +59,7 @@ const Storage = (() => {
     return type ? listArtworks().filter(a => a.type === type) : listArtworks();
   }
   function listArtworksByExhibition(exId) {
-    return listArtworks().filter(a => a.exhibitionId === exId);
+    return listArtworks().filter(a => a.exId === exId);
   }
   function getArtwork(id) {
     return listArtworks().find(a => a.id === id);
@@ -69,7 +69,7 @@ const Storage = (() => {
     const i = list.findIndex(a => a.id === art.id);
     if (i >= 0) list[i] = art;
     else list.unshift(art);
-    set('artworks', list);
+    return set('artworks', list);
   }
   function deleteArtwork(id) {
     const list = listArtworks().filter(a => a.id !== id);

@@ -37,7 +37,7 @@
     const tabs = [
       { key: 'news', icon: 'auto_awesome_motion', label: '展讯', url: '/' },
       { key: 'record', icon: 'edit_note', label: '记录', url: '/record' },
-      { key: 'scan', icon: 'photo_camera', label: '扫一扫', url: scanUrl },
+      { key: 'scan', icon: 'photo_camera', label: '拍作品', url: scanUrl },
       { key: 'me', icon: 'person', label: '我的', url: '/profile' }
     ];
     return `
@@ -188,6 +188,35 @@
     if (id && Storage.getExhibition(id)) return id;
     const list = Storage.listExhibitions();
     return list[0]?.id || null;
+  }
+
+  // 压缩图片到指定最大宽 + JPEG 质量，返回 Promise<dataURL>
+  // 压缩失败或浏览器没 canvas 时返回 null
+  function compressImage(file, maxW, quality) {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const img = new Image();
+        img.onload = () => {
+          try {
+            const scale = img.width > maxW ? maxW / img.width : 1;
+            const w = Math.round(img.width * scale);
+            const h = Math.round(img.height * scale);
+            const canvas = document.createElement('canvas');
+            canvas.width = w; canvas.height = h;
+            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+            resolve(canvas.toDataURL('image/jpeg', quality));
+          } catch (e) {
+            console.warn('[compress] 失败', e);
+            resolve(null);
+          }
+        };
+        img.onerror = () => resolve(null);
+        img.src = ev.target.result;
+      };
+      reader.onerror = () => resolve(null);
+      reader.readAsDataURL(file);
+    });
   }
 
   // 转义工具，避免用户输入的 "</>" 破坏模板
@@ -420,28 +449,15 @@
       `);
       // 绑定拍封面的 input
       const input = document.getElementById('cover-input');
-      if (input) input.addEventListener('change', (e) => {
+      if (input) input.addEventListener('change', async (e) => {
         const f = e.target.files && e.target.files[0];
         if (!f) return;
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-          // 压缩到 1200px 宽，JPEG 0.85 质量
-          const img = new Image();
-          img.onload = () => {
-            const maxW = 1200;
-            const scale = img.width > maxW ? maxW / img.width : 1;
-            const w = Math.round(img.width * scale);
-            const h = Math.round(img.height * scale);
-            const canvas = document.createElement('canvas');
-            canvas.width = w; canvas.height = h;
-            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-            customCover = canvas.toDataURL('image/jpeg', 0.85);
-            rerender();
-            toast('封面已设置 ✦');
-          };
-          img.src = ev.target.result;
-        };
-        reader.readAsDataURL(f);
+        // 压缩到 1200px 宽 / JPEG 0.75
+        const dataUrl = await compressImage(f, 1200, 0.75);
+        if (!dataUrl) return toast('图片处理失败 😢');
+        customCover = dataUrl;
+        rerender();
+        toast('封面已设置 ✦');
       });
     }
 
@@ -844,7 +860,9 @@
       art.year = document.getElementById('ef-year').value.trim();
       art.note = document.getElementById('ef-note').value.trim();
       if (!art.title) return toast('请输入作品名');
-      Storage.saveArtwork(art);
+      if (!Storage.saveArtwork(art)) {
+        return toast('存储已满，先去「我的」清理一下 😢');
+      }
       toast('已保存 ✦');
       viewMode();
     };
@@ -905,34 +923,20 @@
 
     // 绑事件
     const input = document.getElementById('cam-input');
-    input.addEventListener('change', (e) => {
+    input.addEventListener('change', async (e) => {
       const f = e.target.files && e.target.files[0];
       if (!f) return;
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        // 压缩到 1600px 宽
-        const img = new Image();
-        img.onload = () => {
-          const maxW = 1600;
-          const scale = img.width > maxW ? maxW / img.width : 1;
-          const w = Math.round(img.width * scale);
-          const h = Math.round(img.height * scale);
-          const canvas = document.createElement('canvas');
-          canvas.width = w; canvas.height = h;
-          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-          const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
-          try {
-            sessionStorage.setItem('kz_capture', JSON.stringify({
-              exId, dataUrl, takenAt: Date.now()
-            }));
-          } catch (err) {
-            return toast('图片太大，存不下 😢');
-          }
-          Router.navigate('/ocr/' + exId);
-        };
-        img.src = ev.target.result;
-      };
-      reader.readAsDataURL(f);
+      // 压缩到 1000px 宽 / JPEG 0.72
+      const dataUrl = await compressImage(f, 1000, 0.72);
+      if (!dataUrl) return toast('图片处理失败 😢');
+      try {
+        sessionStorage.setItem('kz_capture', JSON.stringify({
+          exId, dataUrl, takenAt: Date.now()
+        }));
+      } catch (err) {
+        return toast('图片太大，存不下 😢');
+      }
+      Router.navigate('/ocr/' + exId);
     });
 
     // 关闭时回到归属展（不是直接关）
@@ -969,7 +973,7 @@
           <div class="mx-container-margin rounded-2xl mb-4 overflow-hidden border-2 border-charcoal-text shadow-[4px_4px_0px_0px_#1A1A1A] bg-charcoal-text">
             ${photoDataUrl
               ? `<img src="${photoDataUrl}" class="w-full max-h-[40vh] object-contain bg-black" alt="拍照预览">`
-              : `<div class="w-full h-48 flex items-center justify-center text-white/50 text-sm font-body-md">[ 没 拍 到 图 片 ]</div>`
+              : `<div class="w-full h-48 flex items-center justify-center text-white/50 text-sm font-body-md">还没拍照呢</div>`
             }
           </div>
 
@@ -1043,7 +1047,9 @@
           : 'https://images.unsplash.com/photo-1554907984-15263bfd63bd?w=600&q=80'),
         createdAt: Date.now()
       };
-      Storage.saveArtwork(art);
+      if (!Storage.saveArtwork(art)) {
+        return toast('存储已满，先去「我的」清理一下 😢');
+      }
       try { sessionStorage.removeItem('kz_capture'); } catch (e) {}
       toast('已保存到日记 ✦');
       Router.navigate('/detail/' + exId);
