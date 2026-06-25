@@ -465,49 +465,65 @@
     function rerender() {
       render(`
         ${appBar('创建', '/')}
-        <main class="mt-20 px-container-margin max-w-md mx-auto fade-in">
-          <h1 class="font-headline-lg text-headline-lg text-charcoal-text text-center mb-section-gap" style="letter-spacing: 6px;">创 建 数 字 展</h1>
+        <main class="mt-20 px-5 max-w-md mx-auto fade-in">
+          <!-- 标题（自然排版，不用大字间距） -->
+          <section class="py-5">
+            <h1 class="text-2xl font-bold text-[#2F5F73] font-['Playfair_Display']">创建数字展</h1>
+            <p class="text-sm text-[#7F8A85] mt-1">把这次看展整理成一份私人展册</p>
+          </section>
 
-          <!-- 封面上传 -->
-          <article class="bg-surface-container-lowest hand-drawn-border p-4 mb-section-gap">
-            <div class="relative aspect-[4/3] rounded-xl overflow-hidden mb-3 border border-outline-variant">
-              <img class="w-full h-full object-cover" src="${currentCover()}" alt="封面预览">
-              ${customCover ? '<span class="absolute top-2 right-2 bg-warm-yellow border-2 border-charcoal-text rounded-full px-2 py-0.5 text-caption text-charcoal-text">📷 自拍</span>' : ''}
+          <!-- 数字展封面卡 -->
+          <article class="bg-white rounded-3xl overflow-hidden border border-[#C7E5EF] shadow-[0_4px_16px_rgba(47,95,115,0.06)] mb-5">
+            <div class="relative aspect-[4/3] overflow-hidden">
+              <img class="w-full h-full object-cover" src="${escapeAttr(currentCover())}" alt="封面预览">
+              ${customCover ? '<span class="absolute top-3 left-3 bg-white/85 backdrop-blur rounded-full px-3 py-1 text-xs font-semibold text-[#2F5F73] flex items-center gap-1"><span class="material-symbols-outlined text-sm">photo_camera</span> 自拍</span>' : ''}
+              <span class="absolute top-3 right-3 bg-[#FFD56B]/80 backdrop-blur rounded-full px-3 py-1 text-xs font-semibold text-[#27302B] flex items-center gap-1">
+                <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">image</span>
+                展册封面
+              </span>
             </div>
-            <div class="flex gap-3 justify-center">
-              <label class="font-body-md text-on-surface-variant px-4 py-2 bg-surface-container-lowest rounded-full border border-charcoal-text cursor-pointer active:scale-95 transition-transform">
-                📷 拍一张
+            <div class="p-4 flex gap-3 justify-center">
+              <label class="flex-1 py-2.5 bg-[#A9DFF3]/20 hover:bg-[#A9DFF3]/35 border border-[#A9DFF3] rounded-2xl text-[#2F5F73] text-sm font-bold text-center cursor-pointer active:scale-95 transition-transform flex items-center justify-center gap-1">
+                <span class="material-symbols-outlined text-base">photo_camera</span>
+                拍一张
                 <input id="cover-input" type="file" accept="image/*" capture="environment" class="hidden">
               </label>
-              <span class="font-body-md text-on-surface-variant px-4 py-2 bg-surface-container-lowest rounded-full border border-charcoal-text cursor-pointer active:scale-95 transition-transform" onclick="cycleCover()">🎨 默认</span>
+              <button class="flex-1 py-2.5 bg-white hover:bg-[#F4FAFC] border border-[#C7E5EF] rounded-2xl text-[#2F5F73] text-sm font-bold active:scale-95 transition-transform flex items-center justify-center gap-1" onclick="cycleCover()">
+                <span class="material-symbols-outlined text-base">refresh</span>
+                换一张
+              </button>
             </div>
           </article>
 
           <!-- 表单 -->
-          <div class="space-y-5 mb-section-gap">
+          <article class="bg-white rounded-3xl border border-[#C7E5EF] shadow-[0_4px_16px_rgba(47,95,115,0.06)] p-5 mb-5 space-y-4">
             <div>
-              <label class="font-label-sm text-primary block mb-2">展览名称</label>
-              <input id="f-title" type="text" placeholder="莫奈·睡莲" value="${title}" class="w-full p-4 bg-surface-container-lowest border-2 border-charcoal-text rounded-2xl font-body-md text-charcoal-text outline-none">
+              <label class="text-xs font-bold text-[#2F5F73] block mb-2">展览名称 <span class="text-[#A9DFF3]">*</span></label>
+              <input id="f-title" type="text" placeholder="莫奈·睡莲" value="${escapeAttr(title)}" class="w-full p-3 bg-[#F4FAFC] border border-[#C7E5EF] focus:border-[#A9DFF3] rounded-2xl text-sm text-[#27302B] placeholder:text-[#7F8A85] outline-none transition-colors">
             </div>
             <div>
-              <label class="font-label-sm text-primary block mb-2">看展时间</label>
-              <input id="f-date" type="date" value="${date}" class="w-full p-4 bg-surface-container-lowest border-2 border-charcoal-text rounded-2xl font-body-md text-charcoal-text outline-none">
+              <label class="text-xs font-bold text-[#2F5F73] block mb-2">看展时间 <span class="text-[#A9DFF3]">*</span></label>
+              <input id="f-date" type="date" value="${date}" class="w-full p-3 bg-[#F4FAFC] border border-[#C7E5EF] focus:border-[#A9DFF3] rounded-2xl text-sm text-[#27302B] outline-none transition-colors">
             </div>
             <div>
-              <label class="font-label-sm text-primary block mb-2">地点</label>
-              <input id="f-loc" type="text" placeholder="杭州·良渚文化艺术中心" value="${location}" class="w-full p-4 bg-surface-container-lowest border-2 border-charcoal-text rounded-2xl font-body-md text-charcoal-text outline-none">
+              <label class="text-xs font-bold text-[#2F5F73] block mb-2">地点</label>
+              <input id="f-loc" type="text" placeholder="杭州·良渚文化艺术中心" value="${escapeAttr(location)}" class="w-full p-3 bg-[#F4FAFC] border border-[#C7E5EF] focus:border-[#A9DFF3] rounded-2xl text-sm text-[#27302B] placeholder:text-[#7F8A85] outline-none transition-colors">
             </div>
             <div>
-              <label class="font-label-sm text-primary block mb-2">天气</label>
-              <div class="grid grid-cols-5 gap-3">
+              <label class="text-xs font-bold text-[#2F5F73] block mb-2">天气</label>
+              <div class="grid grid-cols-5 gap-2">
                 ${['☀️','⛅','🌧','❄️','🌫'].map(w => `
-                  <button class="aspect-square bg-surface-container-lowest border-2 ${w === weather ? 'border-warm-yellow bg-warm-yellow' : 'border-charcoal-text'} rounded-2xl text-2xl cursor-pointer transition-all active:scale-95" onclick="pickWeather('${w}')">${w}</button>
+                  <button class="aspect-square flex items-center justify-center text-2xl rounded-2xl cursor-pointer transition-all active:scale-95 ${w === weather ? 'bg-[#A9DFF3] border-2 border-[#2F5F73] shadow-[0_2px_8px_rgba(169,223,243,0.4)]' : 'bg-[#F4FAFC] border border-[#C7E5EF] hover:border-[#A9DFF3]'}" onclick="pickWeather('${w}')">${w}</button>
                 `).join('')}
               </div>
             </div>
-          </div>
+          </article>
 
-          <button class="w-full p-4 bg-warm-yellow border-2 border-charcoal-text rounded-full shadow-[4px_4px_0px_0px_#1A1A1A] font-label-sm text-charcoal-text active:translate-x-[2px] active:translate-y-[2px] active:shadow-[2px_2px_0px_0px_#1A1A1A] transition-all" onclick="doSave()">创 建</button>
+          <!-- 主按钮 -->
+          <button class="w-full py-4 bg-[#A9DFF3] hover:bg-[#95D4ED] active:scale-[0.98] transition-all rounded-2xl text-[#2F5F73] font-bold text-sm flex items-center justify-center gap-2 shadow-[0_4px_12px_rgba(169,223,243,0.4)]" onclick="doSave()">
+            <span class="material-symbols-outlined text-base">add_circle</span>
+            创建数字展
+          </button>
           <div style="height: 60px;"></div>
         </main>
       `);
