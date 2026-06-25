@@ -309,13 +309,15 @@
     const exhibits = arts.filter(a => a.type === 'exhibit');
 
     const artTiles = (arr) => arr.map((a, i) => `
-      <article class="bg-surface-container-lowest hand-drawn-border p-3 shadow-sm sticker-rotate-${(i % 3) + 1} cursor-pointer"
+      <article class="bg-white rounded-2xl overflow-hidden border border-[#C7E5EF] shadow-[0_2px_8px_rgba(47,95,115,0.04)] cursor-pointer active:scale-[0.98] transition-transform"
                onclick="Router.navigate('/artwork/${a.id}')">
-        <div class="relative aspect-square rounded-lg overflow-hidden mb-2">
+        <div class="relative aspect-[4/3] overflow-hidden">
           <img class="w-full h-full object-cover" src="${escapeAttr(a.cover)}" alt="${escapeAttr(a.title)}" loading="lazy">
         </div>
-        <h4 class="font-title-md text-charcoal-text text-base">${escapeHtml(a.title)}</h4>
-        <p class="font-caption text-on-surface-variant">${escapeHtml(a.author || '')}</p>
+        <div class="p-3">
+          <h4 class="text-sm font-bold text-[#27302B] truncate mb-0.5">${escapeHtml(a.title)}</h4>
+          <p class="text-xs text-[#7F8A85] truncate">${escapeHtml(a.author || '')}</p>
+        </div>
       </article>
     `).join('');
 
@@ -323,74 +325,91 @@
       render(`
         ${appBar('展览详情', '/')}
 
-        <main class="mt-20 px-container-margin max-w-md mx-auto fade-in">
-          <!-- 大封面（手绘边框） -->
-          <article class="bg-surface-container-lowest hand-drawn-border p-3 shadow-[4px_4px_0px_0px_#1A1A1A] mb-section-gap">
-            <div class="relative aspect-[4/3] rounded-xl overflow-hidden">
+        <main class="mt-20 px-5 max-w-md mx-auto fade-in">
+          <!-- 大封面白卡 -->
+          <article class="bg-white rounded-3xl overflow-hidden border border-[#C7E5EF] shadow-[0_4px_16px_rgba(47,95,115,0.06)] mb-5">
+            <div class="relative aspect-[4/3] overflow-hidden">
               <img class="w-full h-full object-cover" src="${escapeAttr(ex.cover)}" alt="${escapeAttr(ex.title)}">
-              <span class="absolute top-3 left-3 bg-warm-yellow border-2 border-charcoal-text rounded-full px-3 py-1 text-label-sm text-charcoal-text">
-                ⭐ 精选展览
+              <span class="absolute top-3 left-3 bg-[#A9DFF3] backdrop-blur rounded-full px-3 py-1 text-xs font-semibold text-[#2F5F73] flex items-center gap-1">
+                <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">auto_stories</span>
+                数字展册
+              </span>
+              <span class="absolute top-3 right-3 bg-white/85 backdrop-blur rounded-full w-9 h-9 flex items-center justify-center text-lg">
+                ${ex.weather || '☀️'}
               </span>
             </div>
           </article>
 
           <!-- 标题 -->
-          <h1 class="font-headline-lg text-headline-lg text-charcoal-text mb-3">${escapeHtml(ex.title)}</h1>
+          <h1 class="text-2xl font-bold text-[#2F5F73] mb-3 font-['Playfair_Display']">${escapeHtml(ex.title)}</h1>
 
           <!-- 元信息 -->
-          <div class="font-body-md text-on-surface-variant space-y-1 mb-6">
-            <div class="flex items-center gap-2"><span class="material-symbols-outlined text-base">calendar_today</span>${escapeHtml(ex.date || '')}</div>
-            <div class="flex items-center gap-2"><span class="material-symbols-outlined text-base">location_on</span>${escapeHtml(ex.location || '未填写地点')}</div>
-            <div class="flex items-center gap-2">${escapeHtml(ex.weather || '☀️')}${ex.summary ? '· ' + escapeHtml(ex.summary.slice(0, 40)) + (ex.summary.length > 40 ? '...' : '') : ''}</div>
+          <div class="text-sm text-[#7F8A85] space-y-1.5 mb-6">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-base text-[#A9DFF3]">calendar_today</span>
+              ${escapeHtml(ex.date || '')}
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-base text-[#A9DFF3]">location_on</span>
+              ${escapeHtml(ex.location || '未填写地点')}
+            </div>
+            ${ex.summary ? `
+              <div class="flex items-start gap-2 text-[#7F8A85] text-xs italic">
+                <span class="material-symbols-outlined text-sm text-[#A9DFF3] mt-0.5">format_quote</span>
+                <span>${escapeHtml(ex.summary.slice(0, 60))}${ex.summary.length > 60 ? '...' : ''}</span>
+              </div>
+            ` : ''}
           </div>
 
           <!-- 当天小结（可编辑） -->
-          <div class="bg-primary-container/30 border-2 border-charcoal-text rounded-[20px] p-5 mb-section-gap relative">
-            <span class="absolute -top-3 left-5 bg-cream-base px-3 text-label-sm text-primary">✦ 当天小结</span>
+          <div class="bg-[#A9DFF3]/20 border border-[#C7E5EF] rounded-3xl p-5 mb-6 relative">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-sm font-bold text-[#2F5F73] flex items-center gap-1">
+                <span class="text-[#A9DFF3]">✦</span> 当天小结
+              </h3>
+              <button class="w-8 h-8 rounded-full bg-white border border-[#C7E5EF] flex items-center justify-center active:scale-90 transition-transform"
+                      onclick="editSummary('${id}')" title="编辑小结">
+                <span class="material-symbols-outlined text-base text-[#2F5F73]">edit</span>
+              </button>
+            </div>
             ${ex.summary
-              ? `<p class="font-body-md text-on-surface-variant leading-relaxed whitespace-pre-wrap">${escapeHtml(ex.summary)}</p>`
-              : `<p class="font-caption text-on-surface-variant italic">还没写，点 ✎ 补一句吧</p>`
+              ? `<p class="text-sm text-[#27302B] leading-relaxed whitespace-pre-wrap">${escapeHtml(ex.summary)}</p>`
+              : `<p class="text-xs text-[#7F8A85] italic">还没写，点 ✎ 补一句吧</p>`
             }
-            <button class="absolute top-2 right-3 w-8 h-8 rounded-full bg-warm-yellow border-2 border-charcoal-text flex items-center justify-center active:scale-90 transition-transform"
-                    onclick="editSummary('${id}')" title="编辑小结">
-              <span class="material-symbols-outlined text-base text-charcoal-text">edit</span>
-            </button>
           </div>
 
         ${paintings.length > 0 ? `
           <div class="flex items-center justify-between mb-4 mt-8">
-            <h3 class="font-title-md text-charcoal-text flex items-center gap-2">
-              画作 <span class="text-coral-pink">${paintings.length}</span>
+            <h3 class="text-base font-bold text-[#2F5F73] flex items-center gap-2">
+              画作 <span class="text-[#A9DFF3]">${paintings.length}</span>
             </h3>
-            <span class="font-label-sm text-primary cursor-pointer" onclick="Router.navigate('/paintings')">查看全部</span>
+            <span class="text-xs text-[#7F8A85] cursor-pointer" onclick="Router.navigate('/paintings')">查看全部</span>
           </div>
-          <section class="grid grid-cols-2 gap-4 mb-section-gap">
+          <section class="grid grid-cols-2 gap-4 mb-6">
             ${artTiles(paintings)}
           </section>
         ` : ''}
 
         ${exhibits.length > 0 ? `
           <div class="flex items-center justify-between mb-4">
-            <h3 class="font-title-md text-charcoal-text flex items-center gap-2">
-              展品 <span class="text-coral-pink">${exhibits.length}</span>
+            <h3 class="text-base font-bold text-[#2F5F73] flex items-center gap-2">
+              展品 <span class="text-[#A9DFF3]">${exhibits.length}</span>
             </h3>
-            <span class="font-label-sm text-primary cursor-pointer" onclick="Router.navigate('/exhibits')">查看全部</span>
+            <span class="text-xs text-[#7F8A85] cursor-pointer" onclick="Router.navigate('/exhibits')">查看全部</span>
           </div>
-          <section class="grid grid-cols-2 gap-4 mb-section-gap">
+          <section class="grid grid-cols-2 gap-4 mb-6">
             ${artTiles(exhibits)}
           </section>
         ` : ''}
 
         ${arts.length === 0 ? `
-          <div class="text-center py-20 text-on-surface-variant">
+          <div class="text-center py-16 text-[#7F8A85]">
             <div class="text-5xl mb-3">📷</div>
             <p>还没有拍作品<br>点右下 ⊕ 开始第一张</p>
           </div>
         ` : ''}
 
-        <div class="flex justify-center py-12 gap-4 text-outline-variant">
-          <span>✦</span><span>✦</span><span>✦</span>
-        </div>
+        <div style="height: 80px;"></div>
       </main>
 
       ${fab('/camera/' + id)}
