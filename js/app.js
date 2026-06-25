@@ -83,8 +83,36 @@
   }
   window.toast = toast;
 
+  // 桌面端轻提示：建议在 iPhone Safari 打开
+  // 移动端（包括 iPad）打开时不显示（用户用移动端就不需要提示）
+  function desktopHint() {
+    return `
+      <div id="desktop-hint" class="hidden fixed top-6 left-6 max-w-[240px] bg-white/95 backdrop-blur border border-[#C7E5EF] rounded-2xl p-4 shadow-[0_4px_16px_rgba(47,95,115,0.08)] z-[60] items-start gap-3">
+        <span class="material-symbols-outlined text-[#A9DFF3] text-2xl flex-shrink-0" style="font-variation-settings: 'FILL' 1;">phonelink</span>
+        <div class="text-xs leading-relaxed text-[#2F5F73]">
+          <p class="font-bold mb-1">建议在 iPhone Safari 打开</p>
+          <p class="text-[#7F8A85]">点分享按钮 · 添加到主屏幕<br>体验更像 App ✦</p>
+        </div>
+        <button class="absolute top-2 right-2 w-6 h-6 flex items-center justify-center text-[#7F8A85] hover:text-[#2F5F73] cursor-pointer" onclick="document.getElementById('desktop-hint').remove()">
+          <span class="material-symbols-outlined text-base">close</span>
+        </button>
+      </div>
+      <script>
+        (function() {
+          // 移动设备（iPhone / Android / iPad）打开时不显示
+          var ua = navigator.userAgent || '';
+          var isMobile = /iPhone|iPad|iPod|Android|Mobile|Tablet/i.test(ua);
+          if (!isMobile) {
+            var el = document.getElementById('desktop-hint');
+            if (el) el.style.display = 'flex';
+          }
+        })();
+      </script>
+    `;
+  }
+
   function render(html) {
-    $app.innerHTML = html;
+    $app.innerHTML = desktopHint() + html;
     window.scrollTo(0, 0);
   }
 
