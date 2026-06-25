@@ -483,14 +483,14 @@
               </span>
             </div>
             <div class="p-4 flex gap-3 justify-center">
-              <label class="flex-1 py-2.5 bg-[#A9DFF3]/20 hover:bg-[#A9DFF3]/35 border border-[#A9DFF3] rounded-2xl text-[#2F5F73] text-sm font-bold text-center cursor-pointer active:scale-95 transition-transform flex items-center justify-center gap-1">
-                <span class="material-symbols-outlined text-base">photo_camera</span>
+              <label class="px-5 py-2 bg-[#A9DFF3]/15 hover:bg-[#A9DFF3]/30 border border-[#C7E5EF] rounded-full text-[#2F5F73] text-xs font-bold text-center cursor-pointer active:scale-95 transition-transform flex items-center justify-center gap-1">
+                <span class="material-symbols-outlined text-sm">photo_camera</span>
                 拍一张
                 <input id="cover-input" type="file" accept="image/*" capture="environment" class="hidden">
               </label>
-              <button class="flex-1 py-2.5 bg-white hover:bg-[#F4FAFC] border border-[#C7E5EF] rounded-2xl text-[#2F5F73] text-sm font-bold active:scale-95 transition-transform flex items-center justify-center gap-1" onclick="cycleCover()">
-                <span class="material-symbols-outlined text-base">refresh</span>
-                换一张
+              <button class="px-5 py-2 bg-white hover:bg-[#F4FAFC] border border-[#C7E5EF] rounded-full text-[#2F5F73] text-xs font-bold active:scale-95 transition-transform flex items-center justify-center gap-1" onclick="cycleCover()">
+                <span class="material-symbols-outlined text-sm">refresh</span>
+                换默认
               </button>
             </div>
           </article>
