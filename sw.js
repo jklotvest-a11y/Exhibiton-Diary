@@ -1,7 +1,7 @@
 // 看展日记 · Service Worker
 // v3 - 缓存所有静态资源 + 自动清旧版本
 
-const CACHE_NAME = 'kanzhan-v7';
+const CACHE_NAME = 'kanzhan-v8';
 const ASSETS = [
   './',
   './index.html',

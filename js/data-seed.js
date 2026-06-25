@@ -11,23 +11,31 @@
   const now = Date.now();
   const day = 86400000;
 
-  // Unsplash 高质量展览相关图片
+  // Unsplash 低饱和展览相关图片（淡蓝白调，与新 UI 协调）
   const img = {
-    monet1: 'https://images.unsplash.com/photo-1577083552431-6e5fd01988ec?w=800&q=80',  // 莫奈睡莲
-    monet2: 'https://images.unsplash.com/photo-1547333590-47fae5f58d21?w=800&q=80',  // 印象派画作
-    monet3: 'https://images.unsplash.com/photo-1578321272176-b7bbc0679853?w=800&q=80',  // 油画
-    monet4: 'https://images.unsplash.com/photo-1579541814924-49fef17c5be5?w=800&q=80', // 湖畔
-    neon1: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800&q=80',   // 霓虹装置
-    neon2: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=800&q=80',   // 灯光艺术
-    museum1: 'https://images.unsplash.com/photo-1564399263809-d5e7c6f8c43b?w=800&q=80', // 博物馆大厅
-    museum2: 'https://images.unsplash.com/photo-1582555172866-f73bb12a2ab3?w=800&q=80', // 古希腊雕塑
-    museum3: 'https://images.unsplash.com/photo-1544967082-d9d25d867d66?w=800&q=80', // 雕塑
-    sculpture1: 'https://images.unsplash.com/photo-1554907984-15263bfd63bd?w=800&q=80', // 现代雕塑
-    sculpture2: 'https://images.unsplash.com/photo-1561622539-3a7d8b4d0a85?w=800&q=80', // 青铜
-    painting1: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=800&q=80', // 抽象画
-    painting2: 'https://images.unsplash.com/photo-1547891654-e66ed7ebb968?w=800&q=80', // 画作
-    painting3: 'https://images.unsplash.com/photo-1531913764164-f85c52e6e654?w=800&q=80', // 画展
-    chick: 'icons/icon.svg'  // 小鸡 mascot
+    // 莫奈·睡莲（西湖/湖畔 + 睡莲意象，低饱和）
+    monet1: 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=800&q=80',  // 画廊白墙
+    monet2: 'https://images.unsplash.com/photo-1577720580479-7d839d829c73?w=800&q=80',  // 印象派淡雅
+    monet3: 'https://images.unsplash.com/photo-1554907984-15263bfd63bd?w=800&q=80',  // 雕塑（柔光）
+    monet4: 'https://images.unsplash.com/photo-1577083552431-6e5fd01988ec?w=800&q=80', // 睡莲原作（低饱和版）
+
+    // 光影之境（博物馆 / 装置空间，低饱和）
+    neon1: 'https://images.unsplash.com/photo-1565060169187-5284a3da6c83?w=800&q=80',    // 极简展厅
+    neon2: 'https://images.unsplash.com/photo-1518998053901-5348d3961a04?w=800&q=80',    // 美术馆走廊
+
+    // 大英博物馆（建筑 / 雕塑，低饱和）
+    museum1: 'https://images.unsplash.com/photo-1582555172866-f73bb12a2ab3?w=800&q=80',  // 古希腊雕塑
+    museum2: 'https://images.unsplash.com/photo-1577083165633-14ebcdb0f658?w=800&q=80',  // 建筑立柱
+    museum3: 'https://images.unsplash.com/photo-1544967082-d9d25d867d66?w=800&q=80',   // 雕塑（保留）
+
+    // 草间弥生·无限之网（展厅白墙 + 极简装置，避免波点彩图）
+    sculpture1: 'https://images.unsplash.com/photo-1503152394-c571994fd383?w=800&q=80',  // 极简展墙
+    sculpture2: 'https://images.unsplash.com/photo-1564399263809-d5e7c6f8c43b?w=800&q=80', // 博物馆大厅
+
+    // 画作（柔光静物）
+    painting1: 'https://images.unsplash.com/photo-1577720580479-7d839d829c73?w=800&q=80',
+    painting2: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=800&q=80',
+    painting3: 'https://images.unsplash.com/photo-1547891654-e66ed7ebb968?w=800&q=80'
   };
 
   const ex1 = {

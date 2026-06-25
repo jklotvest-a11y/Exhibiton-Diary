@@ -4,34 +4,37 @@
 (function () {
   const $app = document.getElementById('app');
 
-  // ========== 公共组件：AppBar（顶部） ==========
+  // ========== 公共组件：AppBar（顶部）============
+  // Step 1 重做：白底半透明 + 淡蓝边框，去掉黄底黑边
   function appBar(title, backUrl = null) {
     const backAction = backUrl === 'back'
       ? `history.back()`
       : (backUrl ? `Router.navigate('${backUrl}')` : `toast('菜单开发中 ✦')`);
     return `
-      <header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant/30 h-16 flex items-center justify-between px-container-margin shadow-sm">
+      <header class="fixed top-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-50 bg-white/85 backdrop-blur-md border-b border-[#C7E5EF] h-16 flex items-center justify-between px-5 shadow-[0_1px_4px_rgba(47,95,115,0.04)]">
         <div class="flex items-center gap-3">
           ${backUrl
-            ? `<span class="material-symbols-outlined text-primary text-2xl cursor-pointer" onclick="${backAction}">arrow_back</span>`
-            : `<span class="material-symbols-outlined text-primary text-2xl cursor-pointer" onclick="toast('菜单开发中 ✦')">menu</span>`
+            ? `<span class="material-symbols-outlined text-[#2F5F73] text-2xl cursor-pointer" onclick="${backAction}">arrow_back</span>`
+            : `<span class="material-symbols-outlined text-[#2F5F73] text-2xl cursor-pointer" onclick="toast('菜单开发中 ✦')">menu</span>`
           }
-          <h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary">${title}</h1>
+          <h1 class="text-lg font-bold text-[#2F5F73] font-['Playfair_Display']">${title}</h1>
         </div>
         <div class="flex items-center gap-4">
           ${backUrl
             ? ''
-            : `<span class="material-symbols-outlined text-on-surface-variant cursor-pointer" onclick="toast('搜索下一版再加 ✦')">search</span>
-               <span class="material-symbols-outlined text-primary cursor-pointer" onclick="Router.navigate('/profile')">account_circle</span>`
+            : `<span class="material-symbols-outlined text-[#7F8A85] cursor-pointer" onclick="toast('搜索下一版再加 ✦')">search</span>
+               <span class="material-symbols-outlined text-[#2F5F73] cursor-pointer" onclick="Router.navigate('/profile')">account_circle</span>`
           }
         </div>
       </header>
     `;
   }
 
-  // ========== 公共组件：Tab Bar（4 个底部 Tab） ==========
+  // ========== 公共组件：Tab Bar（4 个底部 Tab）============
+  // Step 1 重做：白底 + 淡蓝 pill 选中态，去掉蛋黄黄
+  // 桌面下限制 max-width 480px 居中，与内容对齐
   function tabBar(active) {
-    // 扫一扫默认跳到一个"当前数字展"，没有则跳到 /record 让用户选
+    // 拍作品默认跳到一个"当前数字展"，没有则跳到 /record 让用户选
     const currentEx = activeExhibitionId();
     const scanUrl = currentEx ? ('/camera/' + currentEx) : '/record';
     const tabs = [
@@ -41,24 +44,25 @@
       { key: 'me', icon: 'person', label: '我的', url: '/profile' }
     ];
     return `
-      <nav class="fixed bottom-0 left-0 w-full z-50 bg-surface/80 backdrop-blur-md border-t border-outline-variant/30 flex justify-around items-center px-4 py-3 pb-safe shadow-[0_-4px_12px_rgba(26,26,26,0.05)]">
+      <nav class="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[480px] z-50 bg-white/90 backdrop-blur-md border-t border-[#C7E5EF] flex justify-around items-center px-3 py-3 pb-safe shadow-[0_-2px_8px_rgba(47,95,115,0.04)]">
         ${tabs.map(t => `
-          <div class="flex flex-col items-center justify-center ${active === t.key ? 'bg-primary-container text-on-primary-container' : 'text-on-surface-variant'} rounded-full px-5 py-1.5 active:scale-90 transition-transform duration-150 cursor-pointer"
+          <div class="flex flex-col items-center justify-center ${active === t.key ? 'bg-[#A9DFF3] text-[#2F5F73]' : 'text-[#7F8A85]'} rounded-full px-4 py-1.5 active:scale-90 transition-transform duration-150 cursor-pointer"
                onclick="Router.navigate('${t.url}')">
-            <span class="material-symbols-outlined" style="${active === t.key ? "font-variation-settings: 'FILL' 1;" : ''}">${t.icon}</span>
-            <span class="font-label-sm text-label-sm">${t.label}</span>
+            <span class="material-symbols-outlined" style="${active === t.key ? "font-variation-settings: 'FILL' 1; font-size: 20px;" : 'font-size: 20px;'}">${t.icon}</span>
+            <span class="text-[10px] font-bold mt-0.5">${t.label}</span>
           </div>
         `).join('')}
       </nav>
     `;
   }
 
-  // ========== 公共组件：FAB（浮动 + 按钮） ==========
+  // ========== 公共组件：FAB（浮动 + 按钮）============
+  // Step 1 重做：淡蓝主按钮 + 轻阴影
   function fab(url) {
     return `
-      <button class="fixed bottom-24 right-6 w-16 h-16 bg-warm-yellow border-2 border-charcoal-text rounded-full shadow-[6px_6px_0px_0px_#1A1A1A] flex items-center justify-center active:scale-90 transition-transform z-50 group"
+      <button class="fixed bottom-24 right-6 w-14 h-14 bg-[#A9DFF3] hover:bg-[#95D4ED] border border-[#C7E5EF] rounded-full shadow-[0_4px_12px_rgba(169,223,243,0.4)] flex items-center justify-center active:scale-90 transition-all z-50 group"
               onclick="Router.navigate('${url}')">
-        <span class="material-symbols-outlined text-4xl text-charcoal-text group-hover:rotate-90 transition-transform">add</span>
+        <span class="material-symbols-outlined text-3xl text-[#2F5F73] font-bold group-hover:rotate-90 transition-transform" style="font-variation-settings: 'wght' 600;">add</span>
       </button>
     `;
   }
@@ -84,88 +88,120 @@
     window.scrollTo(0, 0);
   }
 
-  // ========== 路由：首页（Stitch 风格） ==========
+  // ========== 路由：首页（雾感淡蓝 + 奶油白） ==========
+  // Step 1: 只改首页，结构按用户规划：城市情境 + 最近展大卡 + 3 统计 + 双列展卡
   Router.register('/', () => {
     const exs = Storage.listExhibitions();
     const stats = Storage.stats();
     const totalArtworks = stats.paintings + stats.exhibits;
+    const recentEx = exs[0]; // 最新创建的那个
 
-    const cards = exs.map((ex, i) => `
-      <article class="bg-surface-container-lowest hand-drawn-border p-4 shadow-sm hover:shadow-md transition-shadow sticker-rotate-${(i % 3) + 1} group cursor-pointer"
-               onclick="Router.navigate('/detail/${ex.id}')">
-        <div class="relative aspect-video rounded-xl overflow-hidden mb-4 border border-outline-variant">
-          <img class="w-full h-full object-cover" src="${escapeAttr(ex.cover)}" alt="${escapeAttr(ex.title)}" loading="lazy">
-          <div class="absolute top-2 right-2 bg-white/90 backdrop-blur rounded-full p-1.5 flex items-center justify-center">
-            <span class="material-symbols-outlined text-warm-yellow text-sm" style="font-variation-settings: 'FILL' 1;">${getWeatherIcon(ex.weather)}</span>
+    // 城市 / 日期 / 天气情境（顶部一行）
+    const today = new Date();
+    const monthDay = `${today.getMonth() + 1}月${today.getDate()}日`;
+    const weekday = ['周日','周一','周二','周三','周四','周五','周六'][today.getDay()];
+
+    // 最近展大卡
+    const recentBlock = recentEx ? `
+      <article class="bg-white rounded-3xl overflow-hidden border border-[#C7E5EF] shadow-[0_4px_16px_rgba(47,95,115,0.06)] mb-6">
+        <div class="relative aspect-[16/9] overflow-hidden">
+          <img class="w-full h-full object-cover" src="${escapeAttr(recentEx.cover)}" alt="${escapeAttr(recentEx.title)}">
+          <div class="absolute top-3 left-3 bg-white/85 backdrop-blur rounded-full px-3 py-1 text-xs font-semibold text-[#2F5F73] flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">${getWeatherIcon(recentEx.weather)}</span>
+            最近一次
           </div>
         </div>
-        <div class="flex justify-between items-end">
-          <div class="space-y-1">
-            <h4 class="font-title-md text-charcoal-text">${escapeHtml(ex.title)}</h4>
-            <p class="font-caption text-on-surface-variant flex items-center gap-1">
-              <span class="material-symbols-outlined text-xs">calendar_today</span>
-              ${escapeHtml(ex.date || '')}
-            </p>
-          </div>
-          <div class="bg-warm-yellow px-3 py-1 rounded-full text-label-sm text-charcoal-text border border-charcoal-text active:scale-95 transition-transform cursor-pointer">
-            去回顾
-          </div>
+        <div class="p-5">
+          <h3 class="text-xl font-bold text-[#2F5F73] mb-1 font-['Playfair_Display']">${escapeHtml(recentEx.title)}</h3>
+          <p class="text-sm text-[#7F8A85] mb-4">${escapeHtml(recentEx.location || '')} · ${escapeHtml(recentEx.date || '')}</p>
+          <button class="w-full py-3 bg-[#A9DFF3] hover:bg-[#95D4ED] active:scale-[0.98] transition-all rounded-2xl text-[#2F5F73] font-bold text-sm flex items-center justify-center gap-1"
+                  onclick="Router.navigate('/detail/${recentEx.id}')">
+            继续整理
+            <span class="material-symbols-outlined text-base">arrow_forward</span>
+          </button>
         </div>
       </article>
-    `).join('');
+    ` : `
+      <article class="bg-white rounded-3xl border border-dashed border-[#C7E5EF] p-8 mb-6 text-center">
+        <div class="text-5xl mb-3">🖼</div>
+        <p class="text-[#2F5F73] font-semibold mb-1">还没有数字展</p>
+        <p class="text-sm text-[#7F8A85] mb-4">点右下 + 创建你的第一个</p>
+      </article>
+    `;
+
+    // 3 个小统计
+    const statBlock = `
+      <section class="grid grid-cols-3 gap-3 mb-8">
+        <div class="bg-[#A9DFF3]/30 rounded-2xl p-4 text-center border border-[#C7E5EF]">
+          <p class="text-3xl font-bold text-[#2F5F73] font-['Playfair_Display']">${stats.exhibitions}</p>
+          <p class="text-xs text-[#7F8A85] mt-1">已看展</p>
+        </div>
+        <div class="bg-[#DFF3CE]/40 rounded-2xl p-4 text-center border border-[#C7E5EF]">
+          <p class="text-3xl font-bold text-[#2F5F73] font-['Playfair_Display']">${totalArtworks}</p>
+          <p class="text-xs text-[#7F8A85] mt-1">已记录</p>
+        </div>
+        <div class="bg-[#FFD56B]/30 rounded-2xl p-4 text-center border border-[#C7E5EF]">
+          <p class="text-3xl font-bold text-[#2F5F73] font-['Playfair_Display']">0</p>
+          <p class="text-xs text-[#7F8A85] mt-1">待整理</p>
+        </div>
+      </section>
+    `;
+
+    // 双列展卡网格
+    const cardGrid = exs.length === 0
+      ? ''
+      : `<section class="grid grid-cols-2 gap-4">
+          ${exs.map((ex, i) => `
+            <article class="bg-white rounded-2xl overflow-hidden border border-[#C7E5EF] shadow-[0_2px_8px_rgba(47,95,115,0.04)] cursor-pointer active:scale-[0.98] transition-transform"
+                     onclick="Router.navigate('/detail/${ex.id}')">
+              <div class="relative aspect-[4/3] overflow-hidden">
+                <img class="w-full h-full object-cover" src="${escapeAttr(ex.cover)}" alt="${escapeAttr(ex.title)}" loading="lazy">
+                <div class="absolute top-2 right-2 bg-white/85 backdrop-blur rounded-full w-7 h-7 flex items-center justify-center">
+                  <span class="material-symbols-outlined text-sm text-[#2F5F73]" style="font-variation-settings: 'FILL' 1;">${getWeatherIcon(ex.weather)}</span>
+                </div>
+              </div>
+              <div class="p-3">
+                <h4 class="text-sm font-bold text-[#27302B] truncate mb-1">${escapeHtml(ex.title)}</h4>
+                <p class="text-xs text-[#7F8A85] flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[10px]">calendar_today</span>
+                  ${escapeHtml(ex.date || '')}
+                </p>
+              </div>
+            </article>
+          `).join('')}
+        </section>`;
 
     render(`
       ${appBar('看展日记')}
 
-      <main class="mt-20 px-container-margin max-w-md mx-auto fade-in">
-        <!-- Header Greeting -->
-        <section class="flex items-center justify-between py-6">
-          <div class="space-y-1">
-            <h2 class="font-title-md text-title-md text-charcoal-text">早安，小雅 ✦</h2>
-            <p class="font-body-md text-on-surface-variant">今天也要记录美好瞬间吗？</p>
-          </div>
-          <div class="relative w-20 h-20 chick-float">
-            <img class="w-full h-full object-contain" src="icons/icon.svg" alt="小鸡 mascot">
-          </div>
+      <main class="mt-20 px-5 max-w-md mx-auto fade-in">
+        <!-- 城市 / 日期 / 天气情境 -->
+        <section class="py-5">
+          <p class="text-xs text-[#7F8A85] tracking-wider">杭州 · ${monthDay} · ${weekday}</p>
+          <h2 class="text-2xl font-bold text-[#2F5F73] mt-1 font-['Playfair_Display']">
+            早安，小雅 <span class="text-[#A9DFF3]">✦</span>
+          </h2>
+          <p class="text-sm text-[#7F8A85] mt-1">今天想看点什么展？</p>
         </section>
 
-        <!-- Stats Card -->
-        <section class="mb-section-gap">
-          <div class="bg-primary-container/30 border-2 border-charcoal-text p-6 rounded-[32px] flex justify-around items-center shadow-[4px_4px_0px_0px_#1A1A1A]">
-            <div class="text-center">
-              <p class="font-label-sm text-on-primary-container mb-1">已看展</p>
-              <p class="font-display-lg text-primary">${stats.exhibitions}</p>
-            </div>
-            <div class="h-12 w-px bg-outline-variant"></div>
-            <div class="text-center">
-              <p class="font-label-sm text-on-primary-container mb-1">已打卡</p>
-              <p class="font-display-lg text-primary">${totalArtworks}</p>
-            </div>
-          </div>
-        </section>
+        <!-- 最近展大卡 -->
+        ${recentBlock}
 
-        <!-- List Header -->
+        <!-- 3 统计 -->
+        ${statBlock}
+
+        <!-- 我的数字展 -->
         <div class="flex items-center justify-between mb-4">
-          <h3 class="font-title-md text-charcoal-text flex items-center gap-2">
+          <h3 class="text-base font-bold text-[#2F5F73] flex items-center gap-2">
             我的数字展
-            <span class="text-coral-pink">✦</span>
+            <span class="text-[#A9DFF3]">✦</span>
           </h3>
-          <span class="font-label-sm text-primary cursor-pointer" onclick="Router.navigate('/paintings')">查看全部</span>
+          <span class="text-xs text-[#7F8A85] cursor-pointer" onclick="Router.navigate('/paintings')">查看全部</span>
         </div>
 
-        <!-- Cards -->
-        ${exs.length === 0
-          ? `<div class="text-center py-20 text-on-surface-variant">
-               <div class="text-5xl mb-3">🖼</div>
-               <p>还没有数字展<br>点右下 + 创建第一个</p>
-             </div>`
-          : `<section class="space-y-6">${cards}</section>`
-        }
+        ${cardGrid}
 
-        <!-- Divider Decoration -->
-        <div class="flex justify-center py-12 gap-4 text-outline-variant">
-          <span>✦</span><span>✦</span><span>✦</span>
-        </div>
+        <div style="height: 80px;"></div>
       </main>
 
       ${fab('/create')}
